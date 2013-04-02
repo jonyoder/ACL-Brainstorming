@@ -11,8 +11,9 @@ I like the idea of group-based permissions for domain objects. What if we create
 | Role_ID |
 | User_ID |
 | Role    |
+-----------
 
-(create ACLs)
+(create ACLs table)
 -------------
 | Group_ACL |
 -------------
