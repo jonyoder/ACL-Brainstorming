@@ -69,7 +69,7 @@ public Patient getPatient(…) {
         User = Bob;
         Role = LCDB-Reader;
         ACL = (User_ID = Bob; Access=read)
-    /*
+    */
     
 
 }
