@@ -5,9 +5,9 @@ I like the idea of group-based permissions for domain objects. What if we create
 
 ```
 (existing roles table)
-------------
-|   Roles  |
-------------
+-----------
+|  Roles  |
+-----------
 | Role_ID |
 | User_ID |
 | Role    |
