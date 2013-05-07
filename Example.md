@@ -66,14 +66,16 @@ More Assumptions
 	12. When a user attempts to load a sale any other way, user needs a READ Sale ACL.
 
 
-  Assume, finally, that the user wants to delete a sale
+  Assume, finally, that the user wants to delete a sale:
   
-    13. A user needs DELETE access to the sale to delete it.
+	13. A user needs DELETE access to the sale to delete it.
 
 
 Other specifications
 ----------------------
-        1. When a method uses @CasHmacPreAuth, we may need to force skipping of other authorization checks to speed things up.
+```
+	1. When a method uses @CasHmacPreAuth, we may need to force skipping of other authorization checks to speed things up.
+```
 
 
 Code Example
