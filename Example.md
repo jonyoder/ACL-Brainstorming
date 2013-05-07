@@ -192,9 +192,9 @@ Scenarios Based on Assumptions:
 
  8. For assumptions 8, 9, and 10, we notice the multi-line annotation beginning with "@CasHmacWriteACL({" that is applied to the Sale class's PK field (saleID).  The "@CasHmacWriteACL" annotation tells us that, when a new Sale object is saved, we need to create the specified ACLs.  Here, we define READ and WRITE ACLs for the current user, a READ ACL for the "audit" role, DELETE ACLs for the current user and the "manager" role, and a DECREASE custom ACL for the "manager" role.
 
- 9. See 8.
+ 9. See number 8, above.
 
-10. See 8.
+10. See number 8, above.
 
 11. Since it may be inefficient to completely load a persisted object before checking an ACL, especially when we're in a situation where an attempt to load an item without the proper ACLs is likely, we create a "@CasHmacPreAuth" annotation that allows us to specify an ACCESS level, a class, and a parameter name.  An interceptor or filter runs pre-authorization code before running the method, ensuring that the specified ACL exists before even allowing the method to run.
 
