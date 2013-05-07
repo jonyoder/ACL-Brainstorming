@@ -43,39 +43,37 @@ More Assumptions
   	Customer_ID =     6
   	Total       = 23.99
 
-  Assume the following:
+Assume the following:
   
-	1. The user needs a WRITE Sale ACL to update the sale (change the sale total).
-	2. The user needs a special ACL to decrease the sale total.
-	3. The user needs READ access to the old store to load the sale
-	4. The user needs READ access to the new store to change the store in the sale
-	5. The user needs WRITE access to the new customer to change the customer in the sale. However, the customer object bases its permissions on the user's privileges to the store, which means that the user needs WRITE access to the store to change the customer in the sale
+1. The user needs a WRITE Sale ACL to update the sale (change the sale total).
+2. The user needs a special ACL to decrease the sale total.
+3. The user needs READ access to the old store to load the sale
+4. The user needs READ access to the new store to change the store in the sale
+5. The user needs WRITE access to the new customer to change the customer in the sale. However, the customer object bases its permissions on the user's privileges to the store, which means that the user needs WRITE access to the store to change the customer in the sale
 
-  Assume, additionally, that the user wants to insert a new sale
-  Assume the following:
+Assume, additionally, that the user wants to insert a new sale
+Assume the following:
   
-	6. The user needs READ access to the store to insert the sale.
-	7. The user needs READ access to the customer to insert the sale.
-	8. A WRITE Sale ACL should be created for the user for the new sale.
-	9. A READ Sale ACL should be created for the "audit" role for the new sale.
-	10. A DELETE Sale ACL should be created for the user and for the "manager" role for the new sale.
+6. The user needs READ access to the store to insert the sale.
+7. The user needs READ access to the customer to insert the sale.
+8. A WRITE Sale ACL should be created for the user for the new sale.
+9. A READ Sale ACL should be created for the "audit" role for the new sale.
+10. A DELETE Sale ACL should be created for the user and for the "manager" role for the new sale.
 
-  We also have the following assumptions that are not specific to the above tasks:
+We also have the following assumptions that are not specific to the above tasks:
   
-	11. When a user attempts to load a sale with a specific ID, pre-authorize based on the ID parameter.
-	12. When a user attempts to load a sale any other way, user needs a READ Sale ACL.
+11. When a user attempts to load a sale with a specific ID, pre-authorize based on the ID parameter.
+12. When a user attempts to load a sale any other way, user needs a READ Sale ACL.
 
 
-  Assume, finally, that the user wants to delete a sale:
+Assume, finally, that the user wants to delete a sale:
   
-	13. A user needs DELETE access to the sale to delete it.
+13. A user needs DELETE access to the sale to delete it.
 
 
 Other specifications
 ----------------------
-```
-	1. When a method uses @CasHmacPreAuth, we may need to force skipping of other authorization checks to speed things up.
-```
+1. When a method uses @CasHmacPreAuth, we may need to force skipping of other authorization checks to speed things up.
 
 
 Code Example
