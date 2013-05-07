@@ -22,18 +22,21 @@ Assume the following database structure:
 ```
 
   Assume that sale with Sale_ID = 25 has the following properties:
+  
   	Sale_ID     =    25
   	Store_ID    =     1
   	Customer_ID =     1
   	Total       = 99.99
 
   Assume that we want to completely change the sale like this:
+  
   	Sale_ID     =    25
   	Store_ID    =     5
   	Customer_ID =     6
   	Total       = 23.99
 
   Assume the following:
+  
 	1. The user needs a WRITE Sale ACL to update the sale (change the sale total).
 	2. The user needs a special ACL to decrease the sale total.
 	3. The user needs READ access to the old store to load the sale
@@ -42,6 +45,7 @@ Assume the following database structure:
 
   Assume, additionally, that the user wants to insert a new sale
   Assume the following:
+  
 	6. The user needs READ access to the store to insert the sale.
 	7. The user needs READ access to the customer to insert the sale.
 	8. A WRITE Sale ACL should be created for the user for the new sale.
@@ -49,15 +53,18 @@ Assume the following database structure:
 	10. A DELETE Sale ACL should be created for the user and for the "manager" role for the new sale.
 
   We also have the following assumptions that are not specific to the above tasks:
+  
 	11. When a user attempts to load a sale with a specific ID, pre-authorize based on the ID parameter.
 	12. When a user attempts to load a sale any other way, user needs a READ Sale ACL.
 
 
   Assume, finally, that the user wants to delete a sale
+  
     13. A user needs DELETE access to the sale to delete it.
 
 
   Other specifications:
+  
 	1. When a method uses @CasHmacPreAuth, we may need to force skipping of other authorization checks to speed things up.
 
 
