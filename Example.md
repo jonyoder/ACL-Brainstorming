@@ -2,12 +2,12 @@ Specifications
 ================
 
 ```
-+===================+
-|| Legend          ||
-+-------------------+
-|| + Primary Key   ||
-|| * Foreign Key   ||
-+===================+
++-----------------+
+| Legend          |
++-----------------+
+| + Primary Key   |
+| * Foreign Key   |
++-----------------+
 ```
 
 Assume the following database structure
