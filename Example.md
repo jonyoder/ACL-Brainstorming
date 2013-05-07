@@ -69,6 +69,7 @@ Assume the following database structure:
 
 
 ```java
+
 @Inject SaleRestService saleRestService;
 
 // Load a sale
@@ -92,34 +93,34 @@ saleRestService.deleteSale(25);
 
 public static class SaleRestService {
 
-	@Inject	SaleDao saleDao;
+  @Inject SaleDao saleDao;
 
-	/* Loads an existing sale */
-	@CasHmacPreAuth(READ, Sale.class, "saleid")      // Fulfill Assumption #11
-	public Sale loadSale(Integer saleId) {
-		saleDao.load(saleId);
-	}
+  /* Loads an existing sale */
+  @CasHmacPreAuth(READ, Sale.class, "saleid")      // Fulfill Assumption #11
+  public Sale loadSale(Integer saleId) {
+    saleDao.load(saleId);
+  }
 
-	/* Adds or updates a sale */
-	public putSale(Sale sale) {
-		Sale saleOrig = saleDao.load(sale.saleId);
-		                                             
-		if (saleOrig.total > sale.total) {
-			CasHmacValidation.verifyCustomAcl(           // Fulfill Assumption #2
+  /* Adds or updates a sale */
+  public putSale(Sale sale) {
+    Sale saleOrig = saleDao.load(sale.saleId);
+                                                 
+    if (saleOrig.total > sale.total) {
+      CasHmacValidation.verifyCustomAcl(           // Fulfill Assumption #2
         "DECREASE", Sale.class, sale
       );
-		}
-		saleDao.put(sale);
-	}
+    }
+    saleDao.put(sale);
+  }
 
-	/*
+  /*
      Deletes a sale. We could force a quick
      pre-auth here with:
      `@CasHmacPreAuth(DELETE, Sale.class, "saleId")`.
   */
-	public deleteSale(Integer saleId) {
-		saleDao.delete(saleId);
-	}
+  public deleteSale(Integer saleId) {
+    saleDao.delete(saleId);
+  }
 
 }
 
@@ -128,23 +129,23 @@ public static class SaleRestService {
 @CasHmacObjectUpdate(WRITE, Sale.class)            // Fulfill Assumption #1
 @CasHmacObjectDelete(DELETE, Sale.class)           // Fulfill Assumption #13 
 public static class Sale {
-	@CasHmacPKField                                  // Fulfill Assumption #1
-	@CasHmacWriteACL({
-		{ READ },
-		{ WRITE },                                     // Fulfill Assumption #8
-		{ READ, { "audit" } },                         // Fulfill Assumption #9
-		{ DELETE { SELF, "manager" } },                // Fulfill Assumption #10
-		{ "DECREASE", { "manager" } }                  // Fulfill Assumption #2
-	})                                               
-	public Integer saleID;
-	@CasHmacForeignFieldRead(READ, Store.class)      // Fulfill Assumption #3
-	@CasHmacForeignFieldUpdate(READ, Store.class)    // Fulfill Assumption #4
-	@CasHmacForeignFieldCreate(READ, Store.class)    // Fulfill Assumption #6
-	public Integer storeID;
-	@CasHmacForeignFieldUpdate(WRITE, Customer.class)// Fulfill Assumption #5
-	@CasHmacForeignFieldCreate(READ, Customer.class) // Fulfill Assumption #7
-	public Integer customerID;
-	public Float   total;
+  @CasHmacPKField                                  // Fulfill Assumption #1
+  @CasHmacWriteACL({
+    { READ },
+    { WRITE },                                     // Fulfill Assumption #8
+    { READ, { "audit" } },                         // Fulfill Assumption #9
+    { DELETE { SELF, "manager" } },                // Fulfill Assumption #10
+    { "DECREASE", { "manager" } }                  // Fulfill Assumption #2
+  })                                               
+  public Integer saleID;
+  @CasHmacForeignFieldRead(READ, Store.class)      // Fulfill Assumption #3
+  @CasHmacForeignFieldUpdate(READ, Store.class)    // Fulfill Assumption #4
+  @CasHmacForeignFieldCreate(READ, Store.class)    // Fulfill Assumption #6
+  public Integer storeID;
+  @CasHmacForeignFieldUpdate(WRITE, Customer.class)// Fulfill Assumption #5
+  @CasHmacForeignFieldCreate(READ, Customer.class) // Fulfill Assumption #7
+  public Integer customerID;
+  public Float   total;
 }
 
 /*
@@ -154,19 +155,19 @@ public static class Sale {
    (ACL calculated through store)
 */
 public static class Customer {
-	@CasHmacPKField                                  // Fulfill Assumption #5
-	public Integer customerID;
-	@CasHmacForeignFieldUpdate(WRITE, Store.class)   // Fulfill Assumption #5
-	@CasHmacForeignFieldRead(READ, Store.class)      // Fulfill Assumption #7
-	public Integer preferredStoreID;
-	public String  name;
+  @CasHmacPKField                                  // Fulfill Assumption #5
+  public Integer customerID;
+  @CasHmacForeignFieldUpdate(WRITE, Store.class)   // Fulfill Assumption #5
+  @CasHmacForeignFieldRead(READ, Store.class)      // Fulfill Assumption #7
+  public Integer preferredStoreID;
+  public String  name;
 }
 
 @CasHmacObjectAcl(Store.class)                     // Fulfill Assumptions #3,4,6,7
 public static class Store {
-	@CasHmacPKField                                  // Fulfill Assumptions #3,4
-	public Integer storeID;
-	public String name;
+  @CasHmacPKField                                  // Fulfill Assumptions #3,4
+  public Integer storeID;
+  public String name;
 }
 
 ```
