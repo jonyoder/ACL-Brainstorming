@@ -5,9 +5,11 @@
 || + Primary Key   ||
 || * Foreign Key   ||
 +===================+
+```
 
-
-Assume the following database structure:
+Assume the following database structure
+-----------------------------------------
+```
                                                        +-----------------+
      +-----------------+      +-----------------+      |     Store       |
      |      Sale       |      |    Customer     |      +-----------------+
@@ -20,6 +22,9 @@ Assume the following database structure:
   |  +-----------------+      +-----------------+                           |
   +-------------------------------------------------------------------------+           
 ```
+
+More Assumptions
+-----------------
 
   Assume that sale with Sale_ID = 25 has the following properties:
   
@@ -63,9 +68,9 @@ Assume the following database structure:
     13. A user needs DELETE access to the sale to delete it.
 
 
-  Other specifications:
-  
-	1. When a method uses @CasHmacPreAuth, we may need to force skipping of other authorization checks to speed things up.
+Other specifications
+----------------------
+  1. When a method uses @CasHmacPreAuth, we may need to force skipping of other authorization checks to speed things up.
 
 
 ```java
