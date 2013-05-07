@@ -176,40 +176,27 @@ public static class Store {
 Scenarios Based on Assumptions:
 ---------------
 
- 1. The user is attempting to update a sale.  The "@CasHmacObjectUpdate(WRITE, Sale.class)" annotation tells us that the user needs a WRITE ACL for the Sale object in order to update it.  We use reflection to look for the Sale class field annotated with "@CasHmacPKField", and then we look for a match in the database (to the user or one of the user's roles).
- 
- 2. Also while the user is attempting to update the sale, we include custom code to verify that the user has a custom "DECREASE" ACL for the Sale class and object.  We use reflection, as in #1, to look for the Sale class PK field and look for a match in the database.
- 
- 3. Also while the user is attempting to update the sale, the "@CasHmacForeignFieldRead(READ, Store.class)" annotation on the "storeID" field tells us that we need a READ ACL for the Store object in order to read the original Sale into an object.  As in #1 and #2, we use reflection to find the PK of the Store object and look up the ACL for the store
- 
- 4. Next, the "@CasHmacForeignFieldUpdate(READ, Store.class)" annotation tells us that we need a READ ACL for the Store object in order to update the existing Sale object.  We use reflection, like we do in 3, to find the ACL field and look of the store ACL
- 
- 5. Next, the "@CasHmacForeignFieldWrite(WRITE, Customer.class)" annotation tells us that we need a WRITE ACL for the Customer object in order to update the existing Sale object.  We use reflection to look at the Customer class (using the customerID field value from the Sale object).  However, we notice that the Customer class is not annotated with the "@CasHmacObjectAcl" annotation, which means that there will not be any ACLs specific to the Customer class in the database.  But, while introspecting, we also notice that the Customer class contains a field annotated with "@CasHmacForeignFieldRead(READ, Store.class)".  This annotation tells us that we need a READ ACL on the Store object specified by the "preferredStoreID" foreign key.  So, we use reflection to inspect the Store class, find its "@CasHmacPKField" annotated primary key field, and look up the ACL for the PK value specified in the Customer class.  NOTE: We also need to look up the Customer object, which we can easily do by finding the Customer class's "@CasHmacPKField" annotated field. even though the Customer class isn't annotated with @CasHmacObjectAcl.
- 
- 6. Here, the user is attempting to insert a new sale.  While using reflection to introspect on the fields of the Sale class, we notice the "@CasHmacForeignFieldCreate(READ, Store.class)" annotation on the "storeID" field.  This tells us that we need a READ ACL for the Store object referenced by the storeID field. 
- 
- 7. We also notice, while attempting to insert a sale, the "@CasHmacForeignFieldCreate(READ, Customer.class)" annotation on the Sale's customerID field.  So, we know that we also need a READ ACL for the Customer object referenced by the Sale's customerID field.
-
- 8. For assumptions 8, 9, and 10, we notice the multi-line annotation beginning with "@CasHmacWriteACL({" that is applied to the Sale class's PK field (saleID).  The "@CasHmacWriteACL" annotation tells us that, when a new Sale object is saved, we need to create the specified ACLs.  Here, we define READ and WRITE ACLs for the current user, a READ ACL for the "audit" role, DELETE ACLs for the current user and the "manager" role, and a DECREASE custom ACL for the "manager" role.
-
- 9. See number 8, above.
-
+1. The user is attempting to update a sale.  The "@CasHmacObjectUpdate(WRITE, Sale.class)" annotation tells us that the user needs a WRITE ACL for the Sale object in order to update it.  We use reflection to look for the Sale class field annotated with "@CasHmacPKField", and then we look for a match in the database (to the user or one of the user's roles).
+2. Also while the user is attempting to update the sale, we include custom code to verify that the user has a custom "DECREASE" ACL for the Sale class and object.  We use reflection, as in #1, to look for the Sale class PK field and look for a match in the database.
+3. Also while the user is attempting to update the sale, the "@CasHmacForeignFieldRead(READ, Store.class)" annotation on the "storeID" field tells us that we need a READ ACL for the Store object in order to read the original Sale into an object.  As in #1 and #2, we use reflection to find the PK of the Store object and look up the ACL for the store
+4. Next, the "@CasHmacForeignFieldUpdate(READ, Store.class)" annotation tells us that we need a READ ACL for the Store object in order to update the existing Sale object.  We use reflection, like we do in 3, to find the ACL field and look of the store ACL
+5. Next, the "@CasHmacForeignFieldWrite(WRITE, Customer.class)" annotation tells us that we need a WRITE ACL for the Customer object in order to update the existing Sale object.  We use reflection to look at the Customer class (using the customerID field value from the Sale object).  However, we notice that the Customer class is not annotated with the "@CasHmacObjectAcl" annotation, which means that there will not be any ACLs specific to the Customer class in the database.  But, while introspecting, we also notice that the Customer class contains a field annotated with "@CasHmacForeignFieldRead(READ, Store.class)".  This annotation tells us that we need a READ ACL on the Store object specified by the "preferredStoreID" foreign key.  So, we use reflection to inspect the Store class, find its "@CasHmacPKField" annotated primary key field, and look up the ACL for the PK value specified in the Customer class.  NOTE: We also need to look up the Customer object, which we can easily do by finding the Customer class's "@CasHmacPKField" annotated field. even though the Customer class isn't annotated with @CasHmacObjectAcl.
+6. Here, the user is attempting to insert a new sale.  While using reflection to introspect on the fields of the Sale class, we notice the "@CasHmacForeignFieldCreate(READ, Store.class)" annotation on the "storeID" field.  This tells us that we need a READ ACL for the Store object referenced by the storeID field. 
+7. We also notice, while attempting to insert a sale, the "@CasHmacForeignFieldCreate(READ, Customer.class)" annotation on the Sale's customerID field.  So, we know that we also need a READ ACL for the Customer object referenced by the Sale's customerID field.
+8. For assumptions 8, 9, and 10, we notice the multi-line annotation beginning with "@CasHmacWriteACL({" that is applied to the Sale class's PK field (saleID).  The "@CasHmacWriteACL" annotation tells us that, when a new Sale object is saved, we need to create the specified ACLs.  Here, we define READ and WRITE ACLs for the current user, a READ ACL for the "audit" role, DELETE ACLs for the current user and the "manager" role, and a DECREASE custom ACL for the "manager" role.
+9. See number 8, above.
 10. See number 8, above.
-
 11. Since it may be inefficient to completely load a persisted object before checking an ACL, especially when we're in a situation where an attempt to load an item without the proper ACLs is likely, we create a "@CasHmacPreAuth" annotation that allows us to specify an ACCESS level, a class, and a parameter name.  An interceptor or filter runs pre-authorization code before running the method, ensuring that the specified ACL exists before even allowing the method to run.
-
     NOTE: When we pre-authorize, we need to cache the ACL for the preauthorized object.  Since the object is likely to have its ACL specified otherwise, we can check the cache on subsequent ACL lookups to avoid multiple lookups for the same ACL.  (See "Other specifications" #1.)
-
 12. When a user attempts to load a sale in a method without the @CasHmacPreAuth annotation, we still need to ensure that the user has the appropriate ACL for the sale.  Since the Sale class is annotated with the @CasHmacObjectAcl annotation, we're aware that we need to look up ACLs for the Sale class. Then, the "@CasHmacObjectRead(READ, Sale.class)" annotation tells us that we need a READ ACL for the Sale class in order to read a Sale object.
-
 13. Very similar to #12, the "@CasHmacObjectDelete(DELETE, Sale.class)" annotation tells us that we need a DELETE ACL for the Sale class in order to delete the Sale object.
 
 
-
 Classes, Methods Needed:
---------------------------
+===========================
 
 Class Annotations:
+------------------
 ```java
   @CasHmacObjectAcl(Store.class)                                    // Fulfill Assumptions #3,4,6,7,12
   @CasHmacObjectCreate(WRITE, Sale.class)                           // 
@@ -221,6 +208,7 @@ Class Annotations:
   These class annotations are considered when performing CRUD operations.  We'll need to create an interface that gets   implemented in our entity classes, and we'll need to ensure that the appropriate helper methods are called to perform the ACL checks specified by these annotations.
 
 PK Field Annotations:
+---------------------
 ```java
   @CasHmacPKField                                                   // Fulfill Assumption #1,3,4,5
   @CasHmacWriteACL({                 
@@ -235,6 +223,7 @@ PK Field Annotations:
   These field annotations are considered, as well, when  performing CRUD operations, and will be used by the helper methods called when we implement the interface referenced above (under Class Annotations).
 
 Foreign Key Field Annotations:
+------------------------------
 ```java
   @CasHmacForeignFieldCreate(READ, Store.class)                     // Fulfill Assumption #6,7
   @CasHmacForeignFieldRead(READ, Store.class)                       // Fulfill Assumption #3,7
@@ -246,6 +235,7 @@ Foreign Key Field Annotations:
   during CRUD operations.
 
 Public RESTful Method Annotations:
+----------------------------------
 ```java
   @CasHmacPreAuth(READ, Sale.class, "saleid")                       // Fulfill Assumption #11
 ```
@@ -253,6 +243,7 @@ Public RESTful Method Annotations:
   The pre-auth annotations will be considered in a filter (RESTEasy 3) or interceptor (RESTEasy 2).
 
 Helper Functions:
+------------------
 ```java
   CasHmacValidation.verifyCustomAcl("DECREASE", Sale.class, sale);  // Fulfill Assumption #2
   CasHmacValidation.addCustomAcl("DECREASE", Sale.class, sale);     // 
