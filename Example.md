@@ -1,3 +1,6 @@
+Specifications
+================
+
 ```
 +===================+
 || Legend          ||
@@ -70,8 +73,11 @@ More Assumptions
 
 Other specifications
 ----------------------
-  1. When a method uses @CasHmacPreAuth, we may need to force skipping of other authorization checks to speed things up.
+        1. When a method uses @CasHmacPreAuth, we may need to force skipping of other authorization checks to speed things up.
 
+
+Code Example
+================
 
 ```java
 
