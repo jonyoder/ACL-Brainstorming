@@ -240,7 +240,7 @@ Helper Functions:
 ------------------
 ```java
   CasHmacValidation.preAuthAcl(READ, Sale.class, sale);                      // Fulfill Assumption #11
-  CasHmacValidation.verifyCustomAcl("DECREASE", Sale.class, sale);           // Fulfill Assumption #2
-  CasHmacValidation.addCustomAcl("DECREASE", Sale.class, sale);              // 
-  CasHmacValidation.deleteCustomAcl("DECREASE", Sale.class, sale);           // 
+  CasHmacValidation.verifyAcl("DECREASE", Sale.class, sale);                 // Fulfill Assumption #2
+  CasHmacValidation.addAcl("DECREASE", Sale.class, sale);                    // 
+  CasHmacValidation.deleteAcl("DECREASE", Sale.class, sale);                 // 
 ```
