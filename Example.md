@@ -138,12 +138,28 @@ public static class Sale {
     @CasHmacWriteAclParameter(access="DECREASE", roles={ "manager" })        // Fulfill Assumption #2
   })                                               
   public Integer saleID;
-  @CasHmacForeignFieldRead(accessLevel=READ, objectClass=Store.class)        // Fulfill Assumption #3
-  @CasHmacForeignFieldUpdate(accessLevel=READ, objectClass=Store.class)      // Fulfill Assumption #4
-  @CasHmacForeignFieldCreate(accessLevel=READ, objectClass=Store.class)      // Fulfill Assumption #6
+  @CasHmacForeignFieldRead(
+    accessLevel=READ,
+    objectClass=Store.class,
+    foreignEntityManager=MyDataSource.class)                                 // Fulfill Assumption #3
+  @CasHmacForeignFieldUpdate(
+    accessLevel=READ,
+    objectClass=Store.class,
+    foreignEntityManager=MyDataSource.class)                                 // Fulfill Assumption #4
+  @CasHmacForeignFieldCreate(
+    accessLevel=READ,
+    objectClass=Store.class,
+    foreignEntityManager=MyDataSource.class)                                 // Fulfill Assumption #6
   public Integer storeID;
-  @CasHmacForeignFieldUpdate(accessLevel=WRITE, objectClass=Customer.class)  // Fulfill Assumption #5
-  @CasHmacForeignFieldCreate(accessLevel=READ, objectClass=Customer.class)   // Fulfill Assumption #7
+  
+  @CasHmacForeignFieldUpdate(
+    accessLevel=WRITE,
+    objectClass=Customer.class,
+    foreignEntityManager=MyDataSource.class)                                 // Fulfill Assumption #5
+  @CasHmacForeignFieldCreate(
+    accessLevel=READ,
+    objectClass=Customer.class,
+    foreignEntityManager=MyDataSource.class)                                 // Fulfill Assumption #7
   public Integer customerID;
   public Float   total;
 }
@@ -157,8 +173,14 @@ public static class Sale {
 public static class Customer {
   @CasHmacPKField                                                            // Fulfill Assumption #5
   public Integer customerID;
-  @CasHmacForeignFieldUpdate(accessLevel=WRITE, objectClass=Store.class)     // Fulfill Assumption #5
-  @CasHmacForeignFieldRead(accessLevel=READ, objectClass=Store.class)        // Fulfill Assumption #7
+  @CasHmacForeignFieldUpdate(
+    accessLevel=WRITE,
+    objectClass=Store.class,
+    foreignEntityManager=MyDataSource.class)                                 // Fulfill Assumption #5
+  @CasHmacForeignFieldRead(
+    accessLevel=READ,
+    objectClass=Store.class,
+    foreignEntityManager=MyDataSource.class)                                 // Fulfill Assumption #7
   public Integer preferredStoreID;
   public String  name;
 }
@@ -178,7 +200,7 @@ Scenarios Based on Assumptions:
 
 1. The user is attempting to update a sale.  The `@CasHmacObjectUpdate` annotation tells us that the user needs a WRITE ACL for the Sale object in order to update it.  We use reflection to look for the Sale class field annotated with `@CasHmacPKField`, and then we look for a match in the database (to the user or one of the user's roles).
 2. Also while the user is attempting to update the sale, we include custom code to verify that the user has a custom "DECREASE" ACL for the Sale class and object.  We use reflection, as in #1, to look for the Sale class PK field and look for a match in the database.
-3. Also while the user is attempting to update the sale, the `@CasHmacForeignFieldRead` annotation on the "storeID" field tells us that we need a READ ACL for the Store object in order to read the original Sale into an object.  As in #1 and #2, we use reflection to find the PK of the Store object and look up the ACL for the store
+3. Also while the user is attempting to update the sale, the `@CasHmacForeignFieldRead` annotation on the "storeID" field tells us that we need a READ ACL for the Store object in order to read the original Sale into an object.  As in #1 and #2, we use reflection to find the PK of the Store object and look up the ACL for the store.  The `foreignEntityManager` field of the `@CasHmacForeignFieldRead` annotation field tells the annotation with which the `Provider<EntityManager>` is exposed in the server's Guice module (to support multiple entity managers for multiple data sources).
 4. Next, the `@CasHmacForeignFieldUpdate` annotation tells us that we need a READ ACL for the Store object in order to update the existing Sale object.  We use reflection, like we do in 3, to find the ACL field and look of the store ACL
 5. Next, the `@CasHmacForeignFieldWrite` annotation tells us that we need a WRITE ACL for the Customer object in order to update the existing Sale object.  We use reflection to look at the Customer class (using the customerID field value from the Sale object).  However, we notice that the Customer class is not annotated with the `@CasHmacObjectAcl` annotation, which means that there will not be any ACLs specific to the Customer class in the database.  But, while introspecting, we also notice that the Customer class contains a field annotated with `@CasHmacForeignFieldRead`.  This annotation tells us that we need a READ ACL on the Store object specified by the "preferredStoreID" foreign key.  So, we use reflection to inspect the Store class, find its `@CasHmacPKField` annotated primary key field, and look up the ACL for the PK value specified in the Customer class.  NOTE: We also need to look up the Customer object, which we can easily do by finding the Customer class's `@CasHmacPKField` annotated field. even though the Customer class isn't annotated with `@CasHmacObjectAcl`.
 6. Here, the user is attempting to insert a new sale.  While using reflection to introspect on the fields of the Sale class, we notice the `@CasHmacForeignFieldCreate` annotation on the "storeID" field.  This tells us that we need a READ ACL for the Store object referenced by the storeID field. 
@@ -225,11 +247,23 @@ PK Field Annotations:
 Foreign Key Field Annotations:
 ------------------------------
 ```java
-  @CasHmacForeignFieldCreate(accessLevel=READ, objectClass=Store.class)      // Fulfill Assumptions #6,7
-  @CasHmacForeignFieldRead  (accessLevel=READ, objectClass=Store.class)      // Fulfill Assumptions #3,7
-  @CasHmacForeignFieldUpdate(accessLevel=READ, objectClass=Store.class)      // Fulfill Assumptions #4,5
-  @CasHmacForeignFieldDelete(accessLevel=READ, objectClass=Store.class)      // 
 
+  @CasHmacForeignFieldCreate(
+    accessLevel=READ,
+    objectClass=Store.class,
+    foreignEntityManager=MyDataSource.class)                                 // Fulfill Assumption #6,7
+  @CasHmacForeignFieldRead(
+    accessLevel=READ,
+    objectClass=Store.class,
+    foreignEntityManager=MyDataSource.class)                                 // Fulfill Assumption #3,7
+  @CasHmacForeignFieldUpdate(
+    accessLevel=READ,
+    objectClass=Store.class,
+    foreignEntityManager=MyDataSource.class)                                 // Fulfill Assumption #4,5
+  @CasHmacForeignFieldDelete(
+    accessLevel=READ,
+    objectClass=Store.class,
+    foreignEntityManager=MyDataSource.class)                                 //
 ```
 
   These field annotations, too, will be considered
